@@ -35,7 +35,7 @@ server.registerTool(
       content: [
         {
           type: "text",
-          text: lyrics,
+          text: JSON.stringify({ lyrics }),
         }
       ],
     })
