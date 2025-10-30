@@ -4,10 +4,11 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import dadJokes from '@mikemcbride/dad-jokes'
 import express from 'express';
 import { z } from "zod";
+import Genius from 'genius-lyrics'
 
 // Create server instance
 const server = new McpServer({
-  name: "dadjokes",
+  name: "lyrics",
   version: "1.0.0",
   capabilities: {
     resources: {},
@@ -15,51 +16,31 @@ const server = new McpServer({
   },
 });
 
-
 server.registerTool(
-  "tell-me-a-joke",
+  "get-lyrics",
   {
     inputSchema: {
-      id: z.number().min(0).max(dadJokes.all.length - 1).describe('joke id')
+      songName: z.string().describe('song name')
     },
-    title: 'Joke Teller',
-    description: `Tells a joke according to its index. Valid ids 0-${dadJokes.all.length - 1}`,    
+    title: 'Lyrics DB',
+    description: `Returns lyrics for a song`,    
   },
-  async ({id}) => {
-    const joke = { joke: dadJokes.all[id] };
+  async ({songName}) => {
+    const Client = new Genius.Client();
+    const results = await Client.songs.search(songName);
+    const firstResult = results[0];
+    const lyrics = await firstResult.lyrics();
+
     return ({
       content: [
         {
           type: "text",
-          text: JSON.stringify(joke),
+          text: lyrics,
         }
       ],
-      structuredContent: {joke},
     })
   }
 )
-
-server.registerTool(
-  "tell-me-a-random-joke",  
-  {
-    title: 'Random Joke Teller',
-    description: 'Tells a random joke',    
-  },
-  async () => {
-    const joke = {joke: dadJokes.random()};
-    
-
-    return ({
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(joke),
-        }
-      ],
-      structuredContent: joke
-    })
-  }
-);
 
 // Streamable HTTP Server
 const app = express();

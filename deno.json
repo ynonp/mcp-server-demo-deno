@@ -8,6 +8,7 @@
     "@std/assert": "jsr:@std/assert@1",
     "ai": "npm:ai@5.0.82",
     "express": "npm:express@5.1.0",
+    "genius-lyrics": "npm:genius-lyrics@4.4.7",
     "zod": "npm:zod@3.25.76"
   }
 }

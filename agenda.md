@@ -1,6 +1,7 @@
 # Writing MCP Server from scratch
 
 1. Why write our own MCP Server
+    - connect AI to our own code
 
 2. Tech stack
     - TypeScript
@@ -17,4 +18,6 @@
 4. Change to Streamable HTTP MCP Server
 
 5. Deploy
+    - https://mcp-server-demo-deno.ynonp.deno.net/mcp
+
 
