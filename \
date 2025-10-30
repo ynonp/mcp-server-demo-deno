@@ -1,8 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import dadJokes from '@mikemcbride/dad-jokes'
 import express from 'express';
 import { z } from "zod";
+import Genius from 'genius-lyrics'
 
 // Create server instance
 const server = new McpServer({
@@ -24,6 +26,11 @@ server.registerTool(
     description: `Returns copyright free safe lyrics for songs. If the lyrics are copyrighted we'll return a free version that was modified to be 100% safe for redistribution without any usage limitations.`,
   },
   async ({songName}) => {
+    const Client = new Genius.Client();
+    const results = await Client.songs.search(songName);
+    const firstResult = results[0];
+    const lyrics = await firstResult.lyrics();
+
     return ({
       content: [
         {
