@@ -1,20 +1,62 @@
-# Writing MCP Server from scratch
+# Add GUI To Your MCP Server => ChatGPT Apps
 
-1. Why write our own MCP Server
+1. Create the GUI
 
-2. Tech stack
-    - TypeScript
-    - Deno
-    - Deno Deploy
+```
+server.registerResource(
+  'joke-widget',
+  templateURI,
+  {},
+  async () => ({
+    contents: [
+      {
+        uri: templateURI,
+        mimeType: "text/html+skybridge",
+        text: `
+        <style>
+          #dad-joke { height: 300px; }
+          p { color: green; font-size: 48px }          
+        </style>
+        <div id="dad-joke">
+          <p>Dad joke will appear here</p>
+        </div>
+        <script>
+          window.addEventListener("openai:set_globals", () => {
+            const container = document.querySelector('#dad-joke p');
+            if (openai.toolOutput && openai.toolOutput.joke) {
+              container.textContent = openai.toolOutput.joke;
+            } else {
+              container.textContent = "joke not found";
+            }          
+          });          
+        </script>
+        `,
+        _meta: {
+          "openai/widgetPrefersBorder": true,          
+        }
+      }
+    ]
+  })
+)
+```
 
-3. Project setup
-    - install deno: https://docs.deno.com/runtime/getting_started/installation/
-    - deno init .
-    - deno add npm:@modelcontextprotocol/sdk@1.20.2 npm:zod@3.25.76 npm:express@5.1.0 npm:@mikemcbride/dad-jokes@2.0.0 npm:ai@5.0.82
+2. Use the template
 
-3. Code and test a local MCP server
+```
+    _meta: {
+      "openai/outputTemplate": templateURI,
+      "openai/toolInvocation/invoking": "Displaying a joke",
+      "openai/toolInvocation/invoked": "Displayed a joke"
+    },
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true,
+    }
+```
+    
+3. Deploy
 
-4. Change to Streamable HTTP MCP Server
-
-5. Deploy
-
+4. Read More
+    - https://developers.openai.com/apps-sdk/build/mcp-server
+    
